@@ -1,0 +1,40 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+publish/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Testing & coverage
+TestResults/
+coverage/
+*.coverage
+*.opencover.xml
+
+# NuGet packages
+*.nupkg
+*.snupkg
+
+# Logs & temp files
+*.log
+*.tmp
+*.cache
+
+# OS files
+.DS_Store
