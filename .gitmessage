@@ -1,0 +1,11 @@
+type(scope)!: short summary
+
+Why:
+- reason for change
+
+What:
+- key change
+
+Notes:
+- breaking change or migration notes
+
