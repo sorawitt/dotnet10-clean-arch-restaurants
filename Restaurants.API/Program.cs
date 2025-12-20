@@ -19,6 +19,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await app.Services.SeedDataAsync();
+if (app.Environment.IsDevelopment())
+{
+    await app.Services.SeedDataAsync();
+}
 
 app.Run();
