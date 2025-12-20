@@ -15,20 +15,21 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<WeatherForecast> Get()
+    public ActionResult<IEnumerable<WeatherForecast>> Get(
+        [FromQuery] int count = 5,
+        [FromQuery] int minTemperatureC = -20,
+        [FromQuery] int maxTemperatureC = 55)
     {
-        return _service.Get();
-    }
-
-    [HttpGet("first")]
-    public ActionResult<WeatherForecast> GetFirst()
-    {
-        var result = _service.Get().FirstOrDefault();
-        if (result is null)
+        if (count <= 0)
         {
-            return NotFound();
+            return BadRequest("count must be greater than 0.");
         }
 
-        return Ok(result);
+        if (minTemperatureC > maxTemperatureC)
+        {
+            return BadRequest("minTemperatureC must be less than or equal to maxTemperatureC.");
+        }
+
+        return Ok(_service.Get(count, minTemperatureC, maxTemperatureC));
     }
 }
