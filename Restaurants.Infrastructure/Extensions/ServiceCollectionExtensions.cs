@@ -11,5 +11,6 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<RestaurantsDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddScoped<RestaurantSeeder>();
     }
 }
