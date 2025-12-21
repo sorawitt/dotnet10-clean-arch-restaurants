@@ -8,6 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddApplication();
+builder.Services.AddAutoMapper(
+    cfg =>
+    {
+        var licenseKey = builder.Configuration["AutoMapper:LicenseKey"];
+        if (!string.IsNullOrWhiteSpace(licenseKey))
+        {
+            cfg.LicenseKey = licenseKey;
+        }
+    },
+    typeof(Restaurants.Application.Extensions.ServiceCollectionExtensions).Assembly
+);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
