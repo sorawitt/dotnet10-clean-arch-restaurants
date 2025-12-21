@@ -1,11 +1,9 @@
-using Microsoft.Extensions.Logging;
-using Restaurants.Domain.Entities;
-using Restaurants.Domain.Repositories;
+using Restaurants.Application.Restaurants.Dtos;
 
 namespace Restaurants.Application.Restaurants;
 
 public interface IRestaurantsService
 {
-    public Task<IEnumerable<Restaurant>> GetAllRestaurants();
-    public Task<Restaurant?> GetRestaurant(int id);
+    public Task<IEnumerable<RestaurantDto>> GetAllRestaurants();
+    public Task<RestaurantDto?> GetRestaurant(int id);
 }
