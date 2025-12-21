@@ -6,4 +6,5 @@ public interface IRestaurantsService
 {
     public Task<IEnumerable<RestaurantDto>> GetAllRestaurants();
     public Task<RestaurantDto?> GetRestaurant(int id);
+    public Task<RestaurantDto> CreateRestautant(CreateRestaurantDto createRestaurantDto);
 }
