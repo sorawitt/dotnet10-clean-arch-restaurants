@@ -66,6 +66,8 @@ dotnet run --project Restaurants.API
 - `GET /api/restaurants`
 - `GET /api/restaurants/{id}`
 - `POST /api/restaurants`
+- `PATCH /api/restaurants/{id}`
+- `DELETE /api/restaurants/{id}`
 
 ### Create restaurant
 Request body:
@@ -90,6 +92,27 @@ Response:
 
 Notes:
 - `category` must be one of: `Italian`, `Mexican`, `Japanese`, `Thai`, `American`, `Indian`.
+
+### Update restaurant
+Request body (partial update):
+```json
+{
+  "name": "Siam Noodles",
+  "description": "Updated description",
+  "hasDelivery": false
+}
+```
+
+Response:
+```text
+204 No Content
+```
+
+### Delete restaurant
+Response:
+```text
+204 No Content
+```
 
 ## Seeding
 Sample data is seeded only in Development environment when the database is empty.
