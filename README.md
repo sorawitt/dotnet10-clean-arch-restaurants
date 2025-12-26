@@ -65,6 +65,31 @@ dotnet run --project Restaurants.API
 ## Endpoints
 - `GET /api/restaurants`
 - `GET /api/restaurants/{id}`
+- `POST /api/restaurants`
+
+### Create restaurant
+Request body:
+```json
+{
+  "name": "Siam Noodles",
+  "description": "Thai comfort food and soups.",
+  "category": "Thai",
+  "hasDelivery": true,
+  "contactEmail": "hello@siamnoodles.example",
+  "contactNumber": "+66 2 123 4567",
+  "city": "Bangkok",
+  "street": "Sukhumvit 21",
+  "postalCode": "10110"
+}
+```
+
+Response:
+```json
+123
+```
+
+Notes:
+- `category` must be one of: `Italian`, `Mexican`, `Japanese`, `Thai`, `American`, `Indian`.
 
 ## Seeding
 Sample data is seeded only in Development environment when the database is empty.
