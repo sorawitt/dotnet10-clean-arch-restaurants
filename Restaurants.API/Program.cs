@@ -22,12 +22,11 @@ builder.Services.AddAutoMapper(
 );
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
-builder.Host.UseSerilog((context, configuration) =>
+builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration
-    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Information)
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services);
 });
 var app = builder.Build();
 
