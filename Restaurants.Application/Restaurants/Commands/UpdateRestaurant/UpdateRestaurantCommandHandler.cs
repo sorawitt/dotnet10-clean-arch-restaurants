@@ -10,10 +10,33 @@ public class UpdateRestaurantCommandHandler(
 {
     public async Task<bool> Handle(UpdateRestaurantCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Update Restaurant");
+        var updatedFields = new List<string>(3);
+        if (request.Name is not null)
+        {
+            updatedFields.Add(nameof(request.Name));
+        }
+
+        if (request.Description is not null)
+        {
+            updatedFields.Add(nameof(request.Description));
+        }
+
+        if (request.HasDelivery.HasValue)
+        {
+            updatedFields.Add(nameof(request.HasDelivery));
+        }
+
+        logger.LogInformation(
+            "Updating restaurant {RestaurantId} with fields {UpdatedFields}",
+            request.Id,
+            updatedFields
+        );
         var restaurant = await repository.GetByIdAsync(request.Id);
         if (restaurant is null)
+        {
+            logger.LogWarning("Restaurant {RestaurantId} not found for update", request.Id);
             return false;
+        }
 
         if (request.Name is not null)
         {
@@ -31,6 +54,7 @@ public class UpdateRestaurantCommandHandler(
         }
 
         await repository.UpdateRestaurant(restaurant);
+        logger.LogInformation("Updated restaurant {RestaurantId}", request.Id);
         return true;
     }
 }

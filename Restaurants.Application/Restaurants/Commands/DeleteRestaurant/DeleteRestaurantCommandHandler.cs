@@ -10,13 +10,16 @@ public class DeleteRestaurantCommandHandler(
 {
     public async Task<bool> Handle(DeleteRestaurantCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Delete Restaurant");
-        var id = request.Id;
-        var restaurant = await repository.GetByIdAsync(id);
+        logger.LogInformation("Deleting restaurant {RestaurantId}", request.Id);
+        var restaurant = await repository.GetByIdAsync(request.Id);
         if (restaurant is null)
+        {
+            logger.LogWarning("Restaurant {RestaurantId} not found for delete", request.Id);
             return false;
+        }
 
         await repository.DeleteRestaurant(restaurant);
+        logger.LogInformation("Deleted restaurant {RestaurantId}", request.Id);
         return true;
     }
 }

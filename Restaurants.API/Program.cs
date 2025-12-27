@@ -1,6 +1,7 @@
 using Restaurants.API.Services;
 using Restaurants.Application.Extensions;
 using Restaurants.Infrastructure.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +22,18 @@ builder.Services.AddAutoMapper(
 );
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
-
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Information)
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
