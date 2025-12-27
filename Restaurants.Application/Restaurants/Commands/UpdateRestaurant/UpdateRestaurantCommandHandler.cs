@@ -1,14 +1,15 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Restaurants.Domain.Exceptions;
 using Restaurants.Domain.Repositories;
 
 namespace Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
 
 public class UpdateRestaurantCommandHandler(
     ILogger<UpdateRestaurantCommandHandler> logger,
-    IRestaurantsRepository repository) : IRequestHandler<UpdateRestaurantCommand, bool>
+    IRestaurantsRepository repository) : IRequestHandler<UpdateRestaurantCommand>
 {
-    public async Task<bool> Handle(UpdateRestaurantCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateRestaurantCommand request, CancellationToken cancellationToken)
     {
         var updatedFields = new List<string>(3);
         if (request.Name is not null)
@@ -34,8 +35,7 @@ public class UpdateRestaurantCommandHandler(
         var restaurant = await repository.GetByIdAsync(request.Id);
         if (restaurant is null)
         {
-            logger.LogWarning("Restaurant {RestaurantId} not found for update", request.Id);
-            return false;
+            throw new NotFoundException($"Restaurant with ID {request.Id} not found.");
         }
 
         if (request.Name is not null)
@@ -55,6 +55,5 @@ public class UpdateRestaurantCommandHandler(
 
         await repository.UpdateRestaurant(restaurant);
         logger.LogInformation("Updated restaurant {RestaurantId}", request.Id);
-        return true;
     }
 }

@@ -1,3 +1,4 @@
+using Restaurants.API.Middlewares;
 using Restaurants.API.Services;
 using Restaurants.Application.Extensions;
 using Restaurants.Infrastructure.Extensions;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
 builder.Services.AddAutoMapper(
@@ -32,9 +34,11 @@ builder.Host.UseSerilog((context, services, configuration) =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseSerilogRequestLogging();
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
