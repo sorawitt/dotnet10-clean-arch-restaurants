@@ -1,14 +1,32 @@
+using Microsoft.OpenApi;
 using Restaurants.API.Middlewares;
 using Restaurants.API.Services;
 using Restaurants.Application.Extensions;
+using Restaurants.Domain.Entities;
 using Restaurants.Infrastructure.Extensions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+const string schemeId = "bearer";
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(schemeId, new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Put ONLY your JWT token here. Swagger will add 'Bearer ' automatically."
+    });
 
-builder.Services.AddSwaggerGen();
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference(schemeId, document)] = new List<string>()
+    });
+});
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
@@ -41,6 +59,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.MapIdentityApi<User>();
 
 app.UseAuthorization();
 
