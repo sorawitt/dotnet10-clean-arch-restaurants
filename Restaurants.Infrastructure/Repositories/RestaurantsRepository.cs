@@ -34,6 +34,11 @@ internal class RestaurantsRepository(RestaurantsDbContext dbContext) : IRestaura
         return restaurant;
     }
 
+    public Task<bool> ExistsAsync(int id)
+    {
+        return dbContext.Restaurants.AnyAsync(r => r.Id == id);
+    }
+
     public Task UpdateRestaurant(Restaurant restaurant)
     {
         return dbContext.SaveChangesAsync();

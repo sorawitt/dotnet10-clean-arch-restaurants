@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Dishes.Dtos;
 using Restaurants.Application.Restaurants.Commands.CreateDish;
+using Restaurants.Application.Restaurants.Commands.DeleteDish;
 using Restaurants.Application.Restaurants.Queries.GetDishByIdForRestaurant;
 using Restaurants.Application.Restaurants.Queries.GetDishesForRestaurant;
 
@@ -30,11 +31,37 @@ public class DishesController(IMediator mediator) : ControllerBase
         return Ok(dishes);
     }
 
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteAllForRestaurant([FromRoute] int restaurantId)
+    {
+        if (restaurantId <= 0)
+            return BadRequest();
+
+        await mediator.Send(new DeleteDishesForRestaurantCommand(restaurantId));
+        return NoContent();
+    }
+
     [HttpGet("{dishId}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<DishDto>> GetByIdForRestaurant([FromRoute] int restaurantId, [FromRoute] int dishId)
     {
         var dish = await mediator.Send(new GetDishByIdForRestaurantQuery(restaurantId, dishId));
         return Ok(dish);
+    }
+
+    [HttpDelete("{dishId}")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteByIdForRestaurant([FromRoute] int restaurantId, [FromRoute] int dishId)
+    {
+        if (restaurantId <= 0 || dishId <= 0)
+            return BadRequest();
+
+        await mediator.Send(new DeleteDishCommand(restaurantId, dishId));
+        return NoContent();
     }
 }
