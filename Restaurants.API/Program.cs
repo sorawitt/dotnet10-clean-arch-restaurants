@@ -17,7 +17,6 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        In = ParameterLocation.Header,
         Description = "Put ONLY your JWT token here. Swagger will add 'Bearer ' automatically."
     });
 
@@ -29,6 +28,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddControllers();
+builder.Services.AddAuthorization();
 builder.Services.AddApplication();
 builder.Services.AddAutoMapper(
     cfg =>
@@ -60,10 +60,10 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.MapIdentityApi<User>();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGroup("api/identity").MapIdentityApi<User>();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment())
