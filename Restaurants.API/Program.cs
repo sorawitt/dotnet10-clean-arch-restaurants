@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
 builder.Services.AddAutoMapper(
@@ -31,7 +32,8 @@ builder.Host.UseSerilog((context, services, configuration) =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
