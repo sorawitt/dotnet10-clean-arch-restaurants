@@ -8,11 +8,23 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-const string schemeId = "bearer";
+// Configure Serilog early to capture startup errors
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services);
+});
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+// Configure Swagger with JWT authentication
+const string bearerScheme = "bearer";
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition(schemeId, new OpenApiSecurityScheme
+    options.AddSecurityDefinition(bearerScheme, new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
@@ -22,14 +34,22 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
-        [new OpenApiSecuritySchemeReference(schemeId, document)] = new List<string>()
+        [new OpenApiSecuritySchemeReference(bearerScheme, document)] = new List<string>()
     });
 });
-builder.Services.AddEndpointsApiExplorer();
+
+// Register middleware
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
-builder.Services.AddControllers();
+
+// Register authentication and authorization
+builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+
+// Register application layers
 builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Configure AutoMapper
 builder.Services.AddAutoMapper(
     cfg =>
     {
@@ -41,31 +61,34 @@ builder.Services.AddAutoMapper(
     },
     typeof(Restaurants.Application.Extensions.ServiceCollectionExtensions).Assembly
 );
-builder.Services.AddInfrastructure(builder.Configuration);
+
+// Register API-specific services
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
-builder.Host.UseSerilog((context, services, configuration) =>
-{
-    configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services);
-});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 app.UseSerilogRequestLogging();
+
+// Error handling must be early in the pipeline
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+// Swagger in all environments for easier testing
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+// Authentication must come before authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map endpoints
 app.MapGroup("api/identity").MapIdentityApi<User>();
+
 app.MapControllers();
 
+// Seed data in development
 if (app.Environment.IsDevelopment())
 {
     await app.Services.SeedDataAsync();

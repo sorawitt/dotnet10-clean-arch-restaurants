@@ -18,7 +18,7 @@ public class DeleteRestaurantCommandHandler(
             throw new NotFoundException($"Restaurant with ID {request.Id} not found.");
         }
 
-        await repository.DeleteRestaurant(restaurant);
+        await repository.DeleteAsync(restaurant);
         logger.LogInformation("Deleted restaurant {RestaurantId}", request.Id);
     }
 }

@@ -28,7 +28,7 @@ public class DeleteDishCommandHandler(
                 $"Dish with ID {request.DishId} not found for restaurant {request.RestaurantId}."
             );
 
-        await dishesRepository.Delete(dish);
+        await dishesRepository.DeleteAsync(dish);
         logger.LogInformation(
             "Deleted dish {DishId} for restaurant {RestaurantId}",
             request.DishId,

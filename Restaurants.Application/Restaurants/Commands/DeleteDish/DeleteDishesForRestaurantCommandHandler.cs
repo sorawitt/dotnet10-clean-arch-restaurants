@@ -18,7 +18,7 @@ public class DeleteDishesForRestaurantCommandHandler(
         if (!restaurantExists)
             throw new NotFoundException($"Restaurant with ID {request.RestaurantId} not found.");
 
-        await dishesRepository.DeleteAllForRestaurant(request.RestaurantId);
+        await dishesRepository.DeleteAllForRestaurantAsync(request.RestaurantId);
         logger.LogInformation("Deleted all dishes for restaurant {RestaurantId}", request.RestaurantId);
     }
 }

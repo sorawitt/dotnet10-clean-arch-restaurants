@@ -53,7 +53,7 @@ public class UpdateRestaurantCommandHandler(
             restaurant.HasDelivery = request.HasDelivery.Value;
         }
 
-        await repository.UpdateRestaurant(restaurant);
+        await repository.UpdateAsync(restaurant);
         logger.LogInformation("Updated restaurant {RestaurantId}", request.Id);
     }
 }

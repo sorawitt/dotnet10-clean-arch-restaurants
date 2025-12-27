@@ -7,31 +7,31 @@ namespace Restaurants.Infrastructure.Repositories;
 
 internal class RestaurantsRepository(RestaurantsDbContext dbContext) : IRestaurantsRepository
 {
-    public async Task<int> CreateRestaurant(Restaurant restaurant)
+    public async Task<int> CreateAsync(Restaurant restaurant)
     {
-        dbContext.Add(restaurant);
+        dbContext.Restaurants.Add(restaurant);
         await dbContext.SaveChangesAsync();
         return restaurant.Id;
     }
 
-    public async Task DeleteRestaurant(Restaurant restaurant)
+    public async Task DeleteAsync(Restaurant restaurant)
     {
-        dbContext.Remove(restaurant);
+        dbContext.Restaurants.Remove(restaurant);
         await dbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<Restaurant>> GetAllAsync()
     {
-        var restaurants = await dbContext.Restaurants.ToListAsync();
-        return restaurants;
+        return await dbContext.Restaurants
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public async Task<Restaurant?> GetByIdAsync(int id)
+    public Task<Restaurant?> GetByIdAsync(int id)
     {
-        var restaurant = await dbContext.Restaurants
-        .Include(r => r.Dishes)
-        .FirstOrDefaultAsync(r => r.Id == id);
-        return restaurant;
+        return dbContext.Restaurants
+            .Include(r => r.Dishes)
+            .FirstOrDefaultAsync(r => r.Id == id);
     }
 
     public Task<bool> ExistsAsync(int id)
@@ -39,8 +39,9 @@ internal class RestaurantsRepository(RestaurantsDbContext dbContext) : IRestaura
         return dbContext.Restaurants.AnyAsync(r => r.Id == id);
     }
 
-    public Task UpdateRestaurant(Restaurant restaurant)
+    public Task UpdateAsync(Restaurant restaurant)
     {
+        dbContext.Restaurants.Update(restaurant);
         return dbContext.SaveChangesAsync();
     }
 }

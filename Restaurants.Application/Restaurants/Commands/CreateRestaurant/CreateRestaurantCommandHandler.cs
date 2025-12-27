@@ -19,7 +19,7 @@ public class CreateRestaurantCommandHandler(
             request.Category
         );
         var restaurant = mapper.Map<Restaurant>(request);
-        var id = await repository.CreateRestaurant(restaurant);
+        var id = await repository.CreateAsync(restaurant);
         logger.LogInformation("Created restaurant {RestaurantId}", id);
         return id;
     }
