@@ -1,22 +1,17 @@
-# Clean dotnet10
+# Restaurants API (.NET 10 Clean Architecture)
 
-Hands-on .NET 10 Clean Architecture sample using a Restaurants API.
+Hands-on sample REST API for restaurants and dishes built with ASP.NET Core 10.
 
-## Description
-This repo follows a course-style path for building scalable REST APIs with ASP.NET Core 10,
-Clean Architecture, EF Core, and Azure. It covers REST fundamentals, routing and model binding,
-database setup and seeding, CRUD workflows, DTO mapping and validation, CQRS/MediatR,
-logging and OpenAPI docs, global exception handling, auth, pagination/sorting,
-testing, and Azure deployment with CI/CD.
-
-I learned from this course:
+Based on the Udemy course:
 https://www.udemy.com/course/aspnet-core-web-api-clean-architecture-azure/
 
-## Tech stack
-- .NET 10
-- ASP.NET Core (Controllers)
-- EF Core + SQL Server (Azure SQL Edge for Apple Silicon)
-- Clean Architecture: Domain / Application / Infrastructure / API
+## Highlights
+- Clean Architecture (Domain / Application / Infrastructure / API)
+- CQRS with MediatR
+- FluentValidation and AutoMapper
+- EF Core + SQL Server
+- ASP.NET Identity API endpoints
+- Serilog logging and Swagger/OpenAPI
 
 ## Solution structure
 ```
@@ -28,10 +23,10 @@ Restaurants.Infrastructure  # EF Core, repositories, persistence
 
 ## Prerequisites
 - .NET SDK 10.x
-- Docker Desktop (for Azure SQL Edge)
+- SQL Server instance (Docker example below)
+- Docker Desktop (for Azure SQL Edge on Apple Silicon)
 
-## Database (Apple Silicon friendly)
-Run SQL Server compatible engine:
+## Database (Azure SQL Edge on Apple Silicon)
 ```bash
 docker run --name sql-edge -e "ACCEPT_EULA=Y" -e 'MSSQL_SA_PASSWORD=Strong\!Passw0rd1' \
   -p 1433:1433 -d mcr.microsoft.com/azure-sql-edge
@@ -62,13 +57,27 @@ dotnet ef database update -p Restaurants.Infrastructure -s Restaurants.API
 dotnet run --project Restaurants.API
 ```
 
+Swagger UI is available at `/swagger` in all environments.
+
 ## Endpoints
+### Restaurants
 - `GET /api/restaurants`
 - `GET /api/restaurants/{id}`
 - `POST /api/restaurants`
 - `PATCH /api/restaurants/{id}`
 - `DELETE /api/restaurants/{id}`
 
+### Dishes
+- `GET /api/restaurants/{restaurantId}/dishes`
+- `GET /api/restaurants/{restaurantId}/dishes/{dishId}`
+- `POST /api/restaurants/{restaurantId}/dishes`
+- `DELETE /api/restaurants/{restaurantId}/dishes`
+- `DELETE /api/restaurants/{restaurantId}/dishes/{dishId}`
+
+### Identity
+- Endpoints are mapped under `/api/identity` (check Swagger for the full list).
+
+## Example requests
 ### Create restaurant
 Request body:
 ```json
@@ -93,29 +102,24 @@ Response:
 Notes:
 - `category` must be one of: `Italian`, `Mexican`, `Japanese`, `Thai`, `American`, `Indian`.
 
-### Update restaurant
-Request body (partial update):
+### Create dish
+Request body:
 ```json
 {
-  "name": "Siam Noodles",
-  "description": "Updated description",
-  "hasDelivery": false
+  "name": "Pad Thai",
+  "description": "Stir-fried rice noodles with tamarind sauce.",
+  "price": 12.5,
+  "kiloCalories": 620
 }
 ```
 
 Response:
-```text
-204 No Content
-```
-
-### Delete restaurant
-Response:
-```text
-204 No Content
+```json
+456
 ```
 
 ## Seeding
-Sample data is seeded only in Development environment when the database is empty.
+Sample data is seeded only in Development when the database is empty.
 
 ## Commit message format
 This repo uses a Conventional Commits style template (see `.gitmessage`).
