@@ -45,13 +45,13 @@ public static class WebApplicationBuilderExtensions
 
     private static void AddAuthentication(IServiceCollection services)
     {
+        // Identity API endpoints register the bearer scheme; only set defaults here.
         services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
-                options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
-                options.DefaultScheme = IdentityConstants.BearerScheme;
-            })
-            .AddBearerToken(IdentityConstants.BearerScheme);
+        {
+            options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
+            options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+            options.DefaultScheme = IdentityConstants.BearerScheme;
+        });
         services.AddAuthorization();
     }
 
