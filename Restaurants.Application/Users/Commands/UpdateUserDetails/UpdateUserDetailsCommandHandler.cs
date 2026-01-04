@@ -20,7 +20,7 @@ public class UpdateUserDetailsCommandHandler(
         var dbUser = await userStore.FindByIdAsync(user.Id, cancellationToken);
         if (dbUser == null)
         {
-            throw new NotFoundException(nameof(User), user.Id);
+            throw new NotFoundException($"User with ID {user.Id} not found.");
         }
 
         dbUser.Nationality = request.Nationality;

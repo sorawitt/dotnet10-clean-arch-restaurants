@@ -7,6 +7,7 @@ using Restaurants.Application.Restaurants.Commands.UpdateRestaurant;
 using Restaurants.Application.Restaurants.Dtos;
 using Restaurants.Application.Restaurants.Queries.GetAllRestaurants;
 using Restaurants.Application.Restaurants.Queries.GetRestaurantById;
+using Restaurants.Domain.Constants;
 
 [ApiController]
 [Authorize]
@@ -15,6 +16,7 @@ using Restaurants.Application.Restaurants.Queries.GetRestaurantById;
 public class RestaurantsController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
+    [Authorize(Roles = $"{UserRoles.Owner},{UserRoles.Admin}")]
     public async Task<ActionResult<IEnumerable<RestaurantDto>>> GetAll()
     {
         var restaurants = await mediator.Send(new GetAllRestaurantsQuery());
